@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------//
 //-- Imports
-const fs = require('fs');
+const generateSite = require('./utils/generate-site.js');
 const inquirer = require('inquirer');
 const generatePage = require('./src/page-template');
 
@@ -134,17 +134,27 @@ Add a New Project
 //----------------------------------------------------------------------------//
 //-- Running Program
 
+//-- Get user details
 promptUser()
+  //-- Get project details
   .then(promptProject)
+  //-- Generate HTML with user and project info
   .then(portfolioData => {
-    const pageHTML = generatePage(portfolioData);
-    // this will create three variables based on data in templateData
-    
-
-    fs.writeFile('./index.html', pageHTML, err => {
-      if (err) throw new Error(err);
-
-      console.log('Page created! Check out index.html in this directory to see it!');
-    });
+    return generatePage(portfolioData);
+  })
+  //-- Write user and project info to HTML
+  .then(pageHTML => {
+    return writeFile(pageHTML);
+  })
+  //-- Copy necessary files to dist including styling and index.html
+  .then(writeFileResponse => {
+    console.log(writeFileResponse);
+    return copyFile();
+  })
+  //-- 
+  .then(copyFileResponse => {
+    console.log(copyFileResponse);
+  })
+  .catch(err => {
+    console.log(err);
   });
-
